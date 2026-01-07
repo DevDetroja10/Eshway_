@@ -1,0 +1,33 @@
+diff --git a/lib/adapters/http.js b/lib/adapters/http.js
+index 95eb2e7..7074e70 100755
+--- a/lib/adapters/http.js
++++ b/lib/adapters/http.js
+@@ -543,6 +543,28 @@ export default isHttpAdapterSupported && function httpAdapter(config) {
+ 
+     const contentLength = utils.toFiniteNumber(headers.getContentLength());
+ 
++    // [SOLUTION IMPLEMENTATION]
++if (config.maxRate && config.maxRate > 0) {
++  const Throttle = new stream.Transform({
++    transform(chunk, encoding, callback) {
++      const delay = Math.floor((chunk.length / config.maxRate) * 1000);
++      setTimeout(() => {
++        this.push(chunk);
++        callback();
++      }, delay);
++    }
++  });
++
++  if (utils.isStream(data)) {
++    data = data.pipe(Throttle);
++  } else {
++    const bufferStream = new stream.Readable();
++    bufferStream._read = () => {};
++    bufferStream.push(data);
++    bufferStream.push(null);
++    data = bufferStream.pipe(Throttle);
++  }
++}
+     
+     // HTTP basic authentication
+     let auth = undefined;
