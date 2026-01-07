@@ -18,6 +18,6 @@ The goal is to implement a `maxRate` configuration option to limit the upload sp
 
 ### Example Usage
 ```javascript
-axios.post('[http://example.com/upload](http://example.com/upload)', fileStream, {
+axios.post('http://example.com/upload', fileStream, {
   maxRate: 1024 // 1KB/s
 });
